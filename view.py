@@ -20,6 +20,9 @@ def main():
 
     # Game Over
     over_font = pygame.font.Font('font/ARCADECLASSIC.TTF', 32)
+    #Sound
+    pygame.mixer.music.load('sound/bg_music.mp3')
+    pygame.mixer.music.play(-1)
 
     # --------------------Score------------------------
     score_value = 0
@@ -33,7 +36,7 @@ def main():
         screen.blit(score, (x, y))
 
     # --------------------Player------------------------
-    player_img = pygame.image.load('images/player' + str(r.randint(1,3)) + '.png')
+    player_img = pygame.image.load('images/player' + str(r.randint(1, 3)) + '.png')
     # Start point
     player_height = 64
     player_width = 64
@@ -63,14 +66,14 @@ def main():
             if image_num > 3:
                 image_num = 1
             enemy_img.append(pygame.image.load('images/asteroid' + str(image_num) + '.png'))
-            image_num+=1
+            image_num += 1
             # Enemy Movement & Start Point
             if i % 2 == 0:
                 enemyX.append(-r.randint(1, 40))
             else:
                 enemyX.append(width + r.randint(1, 40))
-            enemyY.append(r.randint(50, height - 50))
-            enemyX_change.append(r.randint(3, 6))
+            enemyY.append(r.randint(32, height - 32))
+            enemyX_change.append(r.randint(3, 7))
 
     def asteroids(x, y, index):
         screen.blit(enemy_img[index], (x, y))
@@ -82,11 +85,6 @@ def main():
         return False
 
     # -------------------------text----------------------
-    def game_over_text():
-        over_text = over_font.render("GAME OVER!", True, [232, 232, 232])
-        message_to_screen("Score " + str(score_value) , True , [232, 232, 232] ,(250 , 300))
-        screen.blit(over_text, (250, 250))
-
     def message_to_screen(message, antialias, color, pos=(250, 250)):
         text = over_font.render(message, antialias, color)
         screen.blit(text, pos)
@@ -109,8 +107,8 @@ def main():
 
             screen.fill('black')
             message_to_screen("PAUSED", True, [232, 232, 232], (200, 200))
+            message_to_screen("Press c  to continue", True, [232, 232, 232], (200, 250))
             message_to_screen("Press q  to Quit", True, [232, 232, 232], (200, 300))
-            message_to_screen("Press c  to continue", True, [232, 232, 232], (200, 400))
             pygame.display.update()
 
     def game_over():
@@ -131,9 +129,10 @@ def main():
                         quit()
 
             screen.fill('black')
-            game_over_text()
-            message_to_screen("Press r  to Restart", True, [232, 232, 232], (200, 350))
-            message_to_screen("Press q  to Quit", True, [232, 232, 232], (200, 400))
+            message_to_screen("Game Over", True, [232, 232, 232], (200, 200))
+            message_to_screen("Score " + str(score_value), True, [232, 232, 232], (200, 250))
+            message_to_screen("Press r  to Restart", True, [232, 232, 232], (200, 300))
+            message_to_screen("Press q  to Quit", True, [232, 232, 232], (200, 350))
             pygame.display.update()
 
     # -------------------------game loop----------------------
@@ -172,8 +171,7 @@ def main():
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     playerY_change = 0
                 if event.key == pygame.K_SPACE:
-                    player_movement_speed -=7
-
+                    player_movement_speed -= 7
 
         # Setting player boundary's for x (whole screen width) and y (half of screen height)
         if 0 <= playerX + playerX_change <= width - player_width:
@@ -203,7 +201,6 @@ def main():
             asteroids(enemyX[i], enemyY[i], i)
 
         if pygame.time.get_ticks() % 60 == 0:
-            spawn_enemies()
             if score_value % 30 == 0:
                 combo += 1
             score_value += 1 * combo
