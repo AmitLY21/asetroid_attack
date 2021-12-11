@@ -20,7 +20,7 @@ def main():
 
     # Game Over
     over_font = pygame.font.Font('font/ARCADECLASSIC.TTF', 32)
-    #Sound
+    # Sound
     pygame.mixer.music.load('sound/bg_music.mp3')
     pygame.mixer.music.play(-1)
 
@@ -36,7 +36,7 @@ def main():
         screen.blit(score, (x, y))
 
     # --------------------Player------------------------
-    player_img = pygame.image.load('images/player' + str(r.randint(1, 3)) + '.png')
+    player_img = pygame.image.load('images/player' + str(r.randint(1, 2)) + '.png')
     # Start point
     player_height = 64
     player_width = 64
@@ -56,7 +56,8 @@ def main():
     enemyX = []
     enemyY = []
     enemyX_change = []
-    num_of_enemies = 8
+    enemyY_change = []
+    num_of_enemies = 18
     enemy_height = 32
     enemy_width = 32
 
@@ -68,12 +69,22 @@ def main():
             enemy_img.append(pygame.image.load('images/asteroid' + str(image_num) + '.png'))
             image_num += 1
             # Enemy Movement & Start Point
+            Xvelocity = r.randint(3, 7)
+            Yvelocity = r.uniform(0,1)
             if i % 2 == 0:
                 enemyX.append(-r.randint(1, 40))
             else:
                 enemyX.append(width + r.randint(1, 40))
-            enemyY.append(r.randint(32, height - 32))
-            enemyX_change.append(r.randint(3, 7))
+            if i % 5 == 0:
+                enemyX[i] = (r.randint(1, width))
+                enemyY.append(-r.uniform(0, 40))
+                enemyY_change.append(Yvelocity * -1)
+            else:
+                enemyY.append(height + r.randint(1, 40))
+                enemyY_change.append(Yvelocity * 10)
+            enemyY.append(r.randint(0, height))
+            enemyX_change.append(Xvelocity)
+
 
     def asteroids(x, y, index):
         screen.blit(enemy_img[index], (x, y))
@@ -182,6 +193,7 @@ def main():
         # Enemy Movement -  Setting enemies boundary's moving from side to side
         for i in range(num_of_enemies):
             enemyX[i] += enemyX_change[i]
+            enemyY[i] += enemyY_change[i]
             # change direction
             if enemyX[i] <= -30:
                 enemyX_change[i] = abs(enemyX_change[i])
@@ -206,6 +218,7 @@ def main():
             score_value += 1 * combo
 
         player(playerX, playerY)
+        message_to_screen("Life   3", True, [232, 232, 232], (570, 10))
         show_score(textX, textY)
         pygame.display.update()
         clock.tick(60)
